@@ -12,7 +12,6 @@ from sector.views import SectorCreateListView, SectorRetrieveUpdateDestroyView, 
 
 # 3. Importamos as Views de Usuário da pasta 'users'
 from users.views import UsersCreateListView, UsersRetrieveUpdateDestroyView
-from projects.views import ProjectCreateListView # (Se você já está usando include embaixo, talvez nem precise deste import)
 
 from users.views import CustomLoginView
 
@@ -33,5 +32,5 @@ urlpatterns = [
     path('usuarios/<int:pk>/', UsersRetrieveUpdateDestroyView.as_view(), name='users-detail-view'),
 
     # --- Rotas de Projetos ---
-    path('projetos/', include('projects.urls')),
+  
 ]
