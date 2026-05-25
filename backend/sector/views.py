@@ -14,3 +14,17 @@ class SectorRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Sector.objects.all()
     serializer_class = SectorSerializer
     permission_classes = [IsAuthenticated]  # <-- 3. TRANCA ESTA ROTA TAMBÉM
+
+from rest_framework.permissions import AllowAny
+from .models import Indicador, IndicadorValor
+from .serializers import IndicadorSerializer, IndicadorValorSerializer
+
+class IndicadorCreateListView(generics.ListCreateAPIView):
+    queryset = Indicador.objects.all()
+    serializer_class = IndicadorSerializer
+    permission_classes = [AllowAny] # Liberado temporariamente para integração com PHP
+
+class IndicadorValorCreateListView(generics.ListCreateAPIView):
+    queryset = IndicadorValor.objects.all()
+    serializer_class = IndicadorValorSerializer
+    permission_classes = [AllowAny] # Liberado temporariamente para integração com PHP

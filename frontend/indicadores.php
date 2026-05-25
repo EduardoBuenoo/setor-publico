@@ -17,9 +17,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($action === 'cadastrar_indicador') {
             $nome = trim($_POST['nome_indicador']);
             $tipo = $_POST['tipo_indicador'];
-            $stmt_insert = $pdo->prepare("INSERT INTO indicadores (nome, tipo) VALUES (?, ?)");
-            $stmt_insert->execute([$nome, $tipo]);
-            header("Location: indicadores.php?success=Indicador cadastrado com sucesso");
+            
+            // Integração com API Django
+            $data = json_encode(['nome' => $nome, 'tipo' => $tipo]);
+            $ch = curl_init('http://127.0.0.1:8000/indicadores/');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/json',
+                'Content-Length: ' . strlen($data)
+            ]);
+            curl_exec($ch);
+            curl_close($ch);
+
+            header("Location: indicadores.php?success=Indicador cadastrado com sucesso via API");
             exit;
         } elseif ($action === 'lancar_valor') {
             $id_indicador = $_POST['id_indicador'];
@@ -58,9 +70,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fetch Indicators
-$indicadores = $pdo->query("SELECT * FROM indicadores ORDER BY nome")->fetchAll(PDO::FETCH_ASSOC);
-
+// Fetch Indicators via API
+$ch = curl_init('http://127.0.0.1:8000/indicadores/');
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$response = curl_exec($ch);
+curl_close($ch);
+$indicadores = json_decode($response, true) ?? [];
+usort($indicadores, function($a, $b) { return strcmp($a['nome'], $b['nome']); });
 // Fetch all values and calculate totals
 $valores_query = $pdo->query("SELECT iv.*, u.nome as responsavel FROM indicadores_valores iv JOIN usuarios u ON iv.id_usuario = u.id ORDER BY data_registro ASC, iv.id ASC")->fetchAll(PDO::FETCH_ASSOC);
 
