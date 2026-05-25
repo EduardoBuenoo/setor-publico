@@ -17,21 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($action === 'cadastrar_indicador') {
             $nome = trim($_POST['nome_indicador']);
             $tipo = $_POST['tipo_indicador'];
-            
-            // Integração com API Django
-            $data = json_encode(['nome' => $nome, 'tipo' => $tipo]);
-            $ch = curl_init('http://127.0.0.1:8000/indicadores/');
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'Content-Type: application/json',
-                'Content-Length: ' . strlen($data)
-            ]);
-            curl_exec($ch);
-            curl_close($ch);
-
-            header("Location: indicadores.php?success=Indicador cadastrado com sucesso via API");
+            $stmt_insert = $pdo->prepare("INSERT INTO indicadores (nome, tipo) VALUES (?, ?)");
+            $stmt_insert->execute([$nome, $tipo]);
+            header("Location: indicadores.php?success=Indicador cadastrado com sucesso");
             exit;
         } elseif ($action === 'lancar_valor') {
             $id_indicador = $_POST['id_indicador'];
@@ -70,13 +58,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fetch Indicators via API
-$ch = curl_init('http://127.0.0.1:8000/indicadores/');
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-$response = curl_exec($ch);
-curl_close($ch);
-$indicadores = json_decode($response, true) ?? [];
-usort($indicadores, function($a, $b) { return strcmp($a['nome'], $b['nome']); });
+// Fetch Indicators
+$indicadores = $pdo->query("SELECT * FROM indicadores ORDER BY nome")->fetchAll(PDO::FETCH_ASSOC);
+
 // Fetch all values and calculate totals
 $valores_query = $pdo->query("SELECT iv.*, u.nome as responsavel FROM indicadores_valores iv JOIN usuarios u ON iv.id_usuario = u.id ORDER BY data_registro ASC, iv.id ASC")->fetchAll(PDO::FETCH_ASSOC);
 
@@ -144,7 +128,7 @@ foreach ($valores_query as $v) {
         }
         .tab-btn.active {
             color: var(--primary-color);
-            background: #ffffff;
+            background: #9aa0c49f;
             font-weight: 600;
         }
         .tab-content {
@@ -255,9 +239,11 @@ foreach ($valores_query as $v) {
 <body>
     <div class="app-container">
         <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-logo">
-                <i class="fa-solid fa-building" style="color: var(--status-green);"></i> SIGDEI
+         <aside class="sidebar">
+            <div class="sidebar-logo" style="display: flex; align-items:center; gap: 10px;">
+                <img src="/assets/img/logo_prefeitura.png" alt="Logo Prefeitura da Iracemápolis" style="height: 35px; width: auto; object-fit: contain;">
+                
+                <span>SIGDEI</span>
             </div>
             <ul class="nav-menu">
                 <li><a href="dashboard.php" class="nav-link"><i class="fa-solid fa-chart-pie"></i> Painel de Controle</a></li>

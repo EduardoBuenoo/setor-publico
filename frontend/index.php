@@ -13,29 +13,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $senha = $_POST['senha'] ?? '';
 
     if ($matricula && $senha) {
-        // Login via API Django
-        $data = json_encode(['matricula' => $matricula, 'senha' => $senha]);
-        $ch = curl_init('http://127.0.0.1:8000/api/login/');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($data)
-        ]);
-        $response = curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+        $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE matricula = ?");
+        $stmt->execute([$matricula]);
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($http_code === 200) {
-            $result = json_decode($response, true);
-            $usuario = $result['user'];
-            
+        if ($usuario && password_verify($senha, $usuario['senha'])) {
             $_SESSION['usuario_id'] = $usuario['id'];
             $_SESSION['nome'] = $usuario['nome'];
             $_SESSION['nivel_acesso'] = $usuario['nivel_acesso'];
             $_SESSION['id_setor'] = $usuario['id_setor'];
-            $_SESSION['api_token'] = $result['access']; // Salvando o token JWT
             
             header("Location: dashboard.php");
             exit;

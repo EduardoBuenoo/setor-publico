@@ -6,8 +6,6 @@ if (!isset($_SESSION['usuario_id']) || ($_SESSION['nivel_acesso'] !== 'Administr
     exit;
 }
 
-$apiUrl = 'http://127.0.0.1:8000';
-
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($_SESSION['nivel_acesso'] !== 'Administrador') {
@@ -24,20 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if(!$uppercase || !$lowercase || !$number || !$specialChars || strlen($nova_senha) < 6) {
             $error = "A nova senha deve ter no mínimo 6 caracteres, incluindo maiúscula, minúscula, número e caractere especial.";
         } else {
-            // PATCH to update password via API
-            $data = json_encode(['senha' => $nova_senha]);
-            $ch = curl_init("$apiUrl/usuarios/$id_user/");
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH');
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'Content-Type: application/json',
-                'Content-Length: ' . strlen($data),
-                'Authorization: Bearer ' . $_SESSION['api_token']
-            ]);
-            $response = curl_exec($ch);
-            curl_close($ch);
-            
+            $senha_hash = password_hash($nova_senha, PASSWORD_DEFAULT);
+            $stmt_up_pass = $pdo->prepare("UPDATE usuarios SET senha = ? WHERE id = ?");
+            $stmt_up_pass->execute([$senha_hash, $id_user]);
             header("Location: usuarios.php?success=Senha redefinida com sucesso!");
             exit;
         }
@@ -49,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nivel_acesso = $_POST['nivel_acesso'];
         $senha = trim($_POST['senha']);
         
+        // Validar senha: min 6 chars, 1 uppercase, 1 lowercase, 1 number, 1 special
         $uppercase = preg_match('@[A-Z]@', $senha);
         $lowercase = preg_match('@[a-z]@', $senha);
         $number    = preg_match('@[0-9]@', $senha);
@@ -57,33 +45,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if(!$uppercase || !$lowercase || !$number || !$specialChars || strlen($senha) < 6) {
             $error = "A senha deve ter no mínimo 6 caracteres, incluindo maiúscula, minúscula, número e caractere especial.";
         } else {
-            // POST to create user via API
-            $data = json_encode([
-                'matricula' => $matricula,
-                'nome' => $nome,
-                'funcao' => $funcao,
-                'id_setor' => $id_setor,
-                'nivel_acesso' => $nivel_acesso,
-                'senha' => $senha
-            ]);
-            
-            $ch = curl_init("$apiUrl/usuarios/");
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'Content-Type: application/json',
-                'Content-Length: ' . strlen($data),
-                'Authorization: Bearer ' . $_SESSION['api_token']
-            ]);
-            $response = curl_exec($ch);
-            $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            curl_close($ch);
-            
-            if ($httpcode == 201) {
+            $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
+
+            try {
+                $stmt_insert = $pdo->prepare("INSERT INTO usuarios (matricula, nome, funcao, id_setor, nivel_acesso, senha) VALUES (?, ?, ?, ?, ?, ?)");
+                $stmt_insert->execute([$matricula, $nome, $funcao, $id_setor, $nivel_acesso, $senha_hash]);
                 header("Location: usuarios.php?success=1");
                 exit;
-            } else {
+            } catch (PDOException $e) {
                 $error = "Erro ao cadastrar: A matrícula pode já estar em uso.";
             }
         }
@@ -92,66 +61,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Fetch list of users based on role and search filter
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$query = "SELECT u.*, s.nome_setor FROM usuarios u LEFT JOIN setores s ON u.id_setor = s.id WHERE 1=1";
+$params = [];
 
-$ch = curl_init("$apiUrl/usuarios/");
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    'Authorization: Bearer ' . $_SESSION['api_token']
-]);
-$response_usuarios = curl_exec($ch);
-curl_close($ch);
-$all_usuarios = json_decode($response_usuarios, true) ?? [];
-
-// Se a API retornou erro (ex: Token inválido ou expirado), deslogar o usuário ou tratar o erro
-if (isset($all_usuarios['detail']) || isset($all_usuarios['code'])) {
-    header("Location: logout.php");
-    exit;
+if ($_SESSION['nivel_acesso'] === 'Gestor') {
+    $query .= " AND u.id_setor = ?";
+    $params[] = $_SESSION['id_setor'];
 }
 
-$usuarios = [];
-foreach ($all_usuarios as $u) {
-    if ($_SESSION['nivel_acesso'] === 'Gestor' && $u['id_setor'] != $_SESSION['id_setor']) {
-        continue;
-    }
-    
-    if ($search !== '') {
-        $match_nome = stripos($u['nome'], $search) !== false;
-        $match_matricula = stripos($u['matricula'], $search) !== false;
-        if (!$match_nome && !$match_matricula) {
-            continue;
-        }
-    }
-    $usuarios[] = $u;
+if ($search !== '') {
+    $query .= " AND (u.nome ILIKE ? OR u.matricula ILIKE ?)";
+    $params[] = "%$search%";
+    $params[] = "%$search%";
 }
 
-usort($usuarios, function($a, $b) {
-    return strcmp($a['nome'], $b['nome']);
-});
+$query .= " ORDER BY u.nome";
+$stmt = $pdo->prepare($query);
+$stmt->execute($params);
+$usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Fetch sectors via API
-$ch = curl_init("$apiUrl/setores/");
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    'Authorization: Bearer ' . $_SESSION['api_token']
-]);
-$response_setores = curl_exec($ch);
-curl_close($ch);
-$setores = json_decode($response_setores, true) ?? [];
+// Fetch sectors
+$setores = $pdo->query("SELECT * FROM setores ORDER BY nome_setor")->fetchAll(PDO::FETCH_ASSOC);
 
-// Find current user's sector name
-$nome_setor = 'Desconhecido';
-foreach($setores as $s) {
-    if ($s['id'] == $_SESSION['id_setor']) {
-        $nome_setor = $s['nome_setor'];
-        break;
-    }
-}
-
-$user = [
-    'nome' => $_SESSION['nome'],
-    'nivel_acesso' => $_SESSION['nivel_acesso'],
-    'nome_setor' => $nome_setor
-];
+// Fetch logged-in user details
+$stmt_curr = $pdo->prepare("SELECT u.*, s.nome_setor FROM usuarios u LEFT JOIN setores s ON u.id_setor = s.id WHERE u.id = ?");
+$stmt_curr->execute([$_SESSION['usuario_id']]);
+$user = $stmt_curr->fetch(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -224,9 +159,11 @@ $user = [
 <body>
     <div class="app-container">
         <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-logo">
-                <i class="fa-solid fa-building" style="color: var(--status-green);"></i> SIGDEI
+         <aside class="sidebar">
+            <div class="sidebar-logo" style="display: flex; align-items:center; gap: 10px;">
+                <img src="/assets/img/logo_prefeitura.png" alt="Logo Prefeitura da Iracemápolis" style="height: 35px; width: auto; object-fit: contain;">
+                
+                <span>SIGDEI</span>
             </div>
             <ul class="nav-menu">
                 <li><a href="dashboard.php" class="nav-link"><i class="fa-solid fa-chart-pie"></i> Painel de Controle </a></li>
