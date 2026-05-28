@@ -17,6 +17,7 @@ class Oficio(models.Model):
     ano = models.IntegerField()
     data_registro = models.DateField()
     assunto = models.TextField()
+    local_fisico = models.CharField(max_length=255, null=True, blank=True)
     id_usuario = models.ForeignKey('users.Users', on_delete=models.CASCADE, db_column='id_usuario', null=True, blank=True)
     id_setor = models.ForeignKey(Sector, on_delete=models.CASCADE, db_column='id_setor', null=True, blank=True)
 
@@ -37,6 +38,7 @@ class Indicador(models.Model):
     id = models.AutoField(primary_key=True)
     nome = models.CharField(max_length=255)
     tipo = models.CharField(max_length=50)
+    id_setor = models.ForeignKey(Sector, on_delete=models.CASCADE, db_column='id_setor', null=True, blank=True)
 
     class Meta:
         db_table = 'indicadores'

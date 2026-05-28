@@ -1,5 +1,4 @@
 from rest_framework import serializers
-# 1. Aqui: Importando com S maiúsculo!
 from .models import Sector, Indicador, IndicadorValor
 
 class SectorSerializer(serializers.ModelSerializer):

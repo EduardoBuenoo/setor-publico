@@ -24,3 +24,12 @@ class Users(models.Model):
     @property
     def is_authenticated(self):
         return True
+
+class ResetSenhaLog(models.Model):
+    id = models.AutoField(primary_key=True)
+    id_usuario_alvo = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='resets_recebidos', db_column='id_usuario_alvo')
+    id_responsavel = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='resets_realizados', db_column='id_responsavel')
+    data_reset = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'log_reset_senha'

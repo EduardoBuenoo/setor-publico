@@ -1,7 +1,7 @@
 from rest_framework import serializers 
 from .models import Users
-
-
+import re
+from rest_framework.exceptions import ValidationError
 
 class UsersSerializer(serializers.ModelSerializer):
     nome_setor = serializers.CharField(source='id_setor.nome_setor', read_only=True)
@@ -12,6 +12,19 @@ class UsersSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'senha': {'write_only': True}
         }
+
+    def validate_senha(self, value):
+        if len(value) < 6:
+            raise ValidationError("A senha deve ter no mínimo 6 caracteres.")
+        if not re.search(r'[A-Z]', value):
+            raise ValidationError("A senha deve conter pelo menos uma letra maiúscula.")
+        if not re.search(r'[a-z]', value):
+            raise ValidationError("A senha deve conter pelo menos uma letra minúscula.")
+        if not re.search(r'\d', value):
+            raise ValidationError("A senha deve conter pelo menos um número.")
+        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', value):
+            raise ValidationError("A senha deve conter pelo menos um caractere especial.")
+        return value
 
     def create(self, validated_data):
         import bcrypt

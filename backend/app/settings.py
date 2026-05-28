@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,10 +42,12 @@ INSTALLED_APPS = [
     'users',
     'sector',
     'projects',
+    'oficios',
     
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -135,3 +138,4 @@ REST_FRAMEWORK = {
         'users.authentication.CustomJWTAuthentication',
     ),
 }
+CORS_ALLOW_ALL_ORIGINS = True

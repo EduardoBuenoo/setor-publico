@@ -151,6 +151,9 @@ body {
     border-right: 1px solid var(--border-color);
     background: #192642;
     backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    height: 100vh;
 }
 
 .sidebar-logo {
