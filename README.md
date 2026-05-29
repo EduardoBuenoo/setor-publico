@@ -1,6 +1,6 @@
 # Plataforma Inteligente para Análise e Gestão de Processos do Departamento de Desenvolvimento Econômico
 
-Sistema desenvolvido para auxiliar o Departamento de Desenvolvimento Econômico da Prefeitura Municipal de Iracemápolis no gerenciamento de indicadores, projetos, ofícios e produtividade dos setores públicos.
+Sistema desenvolvido por estudantes do 5° período de Sistemas de Informação, para auxiliar o Departamento de Desenvolvimento Econômico da Prefeitura Municipal de Iracemápolis no gerenciamento de indicadores, projetos, ofícios e produtividade dos setores públicos.
 
 ---
 
