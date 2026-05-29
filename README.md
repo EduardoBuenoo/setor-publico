@@ -6,16 +6,10 @@ Sistema desenvolvido por estudantes do 5° período de Sistemas de Informação,
 
 # 📌 Sobre o Projeto
 
-O projeto foi desenvolvido com foco na modernização da gestão pública, permitindo centralizar informações, acompanhar indicadores e otimizar processos internos do departamento.
+O projeto foi desenvolvido a partir da disciplica de Projeto Interdisciplinar III, cujo tema é "Plataforma Inteligente para Monitoramento e Otimização de Infraestruturas Sustentáveis", considerando o Objetivo de Desenvolvimento Sustentável (ODS 9). 
+O foco do projeto foi promover uma tecnologia acessível com foco na modernização da gestão pública, permitindo centralizar informações, acompanhar indicadores e otimizar processos internos do departamento.
 
-A plataforma permite que colaboradores dos setores:
-
-- Banco do Povo
-- PAT
-- SEBRAE
-- PROCON
-
-registrem suas produções, atividades, projetos e ofícios, enquanto gestores acompanham dados por dashboards e relatórios gerenciais.
+A plataforma permite que colaboradores dos setores (como Posto de Atendimento ao Trabalhador, SEBRAE, PROCON e Banco do Povo) registrem suas produções, atividades, projetos e ofícios, enquanto gestores acompanham dados por dashboards e relatórios gerenciais.
 
 ---
 
@@ -71,8 +65,7 @@ Equipe Gafia:
 - Gestão de tarefas
 - Controle de prioridade
 - Tags de status
-- Percentual de conclusão
-- Gráfico de Gantt
+- Barra de Progresso de Projetos
 - Visualização de cronogramas
 - Controle por setor e nível de acesso
 
@@ -136,7 +129,7 @@ O sistema gera dashboards automaticamente conforme o tipo de dado do indicador:
 # 📂 Estrutura dos Principais Módulos
 
 ## Usuários
-Gerenciamento de acesso e autenticação.
+Criação e exclusão de usuário, Gerenciamento de acesso e autenticação.
 
 ## Indicadores
 Controle de produtividade dos setores.
