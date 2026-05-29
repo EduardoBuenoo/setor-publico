@@ -3,7 +3,9 @@ from .views import (
     SectorCreateListView, 
     SectorRetrieveUpdateDestroyView, 
     IndicadorCreateListView, 
-    IndicadorValorCreateListView
+    IndicadorValorCreateListView,
+    IndicadorValorRetrieveUpdateDestroyView,
+    AtividadeCreateListView
 )
 
 urlpatterns = [
@@ -11,4 +13,6 @@ urlpatterns = [
     path('setores/<int:pk>/', SectorRetrieveUpdateDestroyView.as_view(), name='sector-detail-view'),
     path('indicadores/', IndicadorCreateListView.as_view(), name='indicador-create-list'),
     path('indicadores-valores/', IndicadorValorCreateListView.as_view(), name='indicador-valor-create-list'),
+    path('indicadores-valores/<int:pk>/', IndicadorValorRetrieveUpdateDestroyView.as_view(), name='indicador-valor-detail'),
+    path('atividades/', AtividadeCreateListView.as_view(), name='atividade-create-list'),
 ]

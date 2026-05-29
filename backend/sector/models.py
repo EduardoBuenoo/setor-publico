@@ -4,6 +4,7 @@ class Sector(models.Model):
     id = models.AutoField(primary_key=True)
     nome_setor = models.CharField(max_length=255)
     sigla = models.CharField(max_length=50)
+    nome_departamento = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         db_table = 'setores'

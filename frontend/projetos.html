@@ -34,7 +34,7 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-logo" style="display: flex; align-items:center; gap: 10px;">
-                <img src="/assets/img/logo_prefeitura.png" alt="Logo Prefeitura da Iracemápolis" style="height: 35px; width: auto; object-fit: contain;">
+                <img src="assets/img/logo_prefeitura.png" alt="Logo Prefeitura da Iracemápolis" style="height: 35px; width: auto; object-fit: contain;">
                 <span>SIGDEI</span>
             </div>
             <ul class="nav-menu">
@@ -42,6 +42,7 @@
                 <li><a href="oficios.html" class="nav-link"><i class="fa-solid fa-file-signature"></i> Ofícios</a></li>
                 <li><a href="projetos.html" class="nav-link active"><i class="fa-solid fa-project-diagram"></i> Projetos</a></li>
                 <li><a href="indicadores.html" class="nav-link"><i class="fa-solid fa-chart-bar"></i> Indicadores</a></li>
+                
                 <li id="menu-usuarios" style="display:none;"><a href="usuarios.html" class="nav-link"><i class="fa-solid fa-users"></i> Usuários</a></li>
                 <li><a href="configuracoes.html" class="nav-link"><i class="fa-solid fa-gear"></i> Configurações</a></li>
             </ul>
@@ -218,6 +219,7 @@
         let projetosList = [];
         let setoresMap = {};
         let usuariosMap = {};
+        let openProjectRows = new Set();
 
         function formatData(dataStr) {
             if(!dataStr) return '';
@@ -343,47 +345,57 @@
                                     <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.5rem;">
                                         <span style="color: #fff;">Progresso</span> <span style="color: #10b981; font-weight: bold;">${concluidas} / ${total}</span>
                                     </div>
-                                    <div style="height: 100px; position: relative;"><canvas id="donut-${p.id}"></canvas></div>
+                                    <div style="width: 100%; background: rgba(255, 255, 255, 0.1); border-radius: 8px; height: 12px; overflow: hidden; margin-bottom: 0.5rem;">
+                                        <div style="width: ${total > 0 ? (concluidas/total)*100 : 0}%; background: ${total > 0 && concluidas === total ? 'var(--status-green)' : 'var(--primary-color)'}; height: 100%; transition: width 0.5s ease-in-out; border-radius: 8px;"></div>
+                                    </div>
+                                    <div style="font-size: 0.75rem; color: #94a3b8; text-align: right;">
+                                        ${total > 0 ? Math.round((concluidas/total)*100) : 0}% Concluído
+                                    </div>
                                 </div>
                             </div>
                             <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
                                 <thead style="background: rgba(255,255,255,0.05);"><tr><th style="padding: 0.75rem;">Status</th><th>Tarefa</th><th>Responsável</th><th>Fim</th></tr></thead>
                                 <tbody>
-                                    ${tarefas.map(t => `
+                                    ${tarefas.map(t => {
+                                        let isLate = false;
+                                        if (t.data_conclusao) {
+                                            isLate = t.data_conclusao > t.data_final;
+                                        } else {
+                                            isLate = hoje > t.data_final;
+                                        }
+                                        
+                                        let iconHtml = '';
+                                        if (!t.concluida) {
+                                            iconHtml = `<button onclick="toggleTarefaInline(${t.id}, true, ${p.id})" style="background:none; border:none; cursor:pointer;" title="Marcar como Concluída"><i class="fa-regular fa-square" style="color:#64748b; font-size:1.1rem;"></i></button>`;
+                                        } else {
+                                            const color = isLate ? '#ef4444' : '#10b981';
+                                            iconHtml = `<button onclick="toggleTarefaInline(${t.id}, false, ${p.id})" style="background:none; border:none; cursor:pointer;" title="${isLate ? 'Concluída com Atraso (Clique para desmarcar)' : 'Concluída no Prazo (Clique para desmarcar)'}"><i class="fa-solid fa-check" style="color:${color}; font-size:1.1rem;"></i></button>`;
+                                        }
+                                        
+                                        return `
                                         <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                            <td style="padding: 0.75rem; text-align: center;">${t.concluida ? '<i class="fa-solid fa-check" style="color:#10b981;"></i>' : '<i class="fa-regular fa-square" style="color:#64748b;"></i>'}</td>
+                                            <td style="padding: 0.75rem; text-align: center;">${iconHtml}</td>
                                             <td style="color: #fff; ${t.concluida ? 'text-decoration:line-through; opacity:0.5;' : ''}">${t.nome_tarefa}</td>
                                             <td><span style="background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; color: #333;">${t.responsavel}</span></td>
                                             <td style="color: #fff;">${formatData(t.data_final)}</td>
                                         </tr>
-                                    `).join('')}
+                                        `;
+                                    }).join('')}
                                 </tbody>
                             </table>
                         </div>
                     </td>
                 `;
                 tbody.appendChild(detRow);
-                if (total > 0) {
-                    setTimeout(() => {
-                        const ctx = document.getElementById('donut-' + p.id).getContext('2d');
-                        new Chart(ctx, {
-                            type: 'doughnut',
-                            data: {
-                                labels: ['No Prazo', 'Atrasado', 'Pendente'],
-                                datasets: [{
-                                    data: [contVerde, contVermelho, contAmarelo],
-                                    backgroundColor: ['#10b981', '#ef4444', '#f59e0b'],
-                                    borderWidth: 0
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                cutout: '70%',
-                                plugins: { legend: { display: false } }
-                            }
-                        });
-                    }, 0);
+            });
+            
+            // Reabre as linhas que estavam abertas antes do refresh
+            openProjectRows.forEach(id => {
+                const row = document.getElementById('details-row-' + id);
+                const chevron = document.getElementById('chevron-' + id);
+                if (row && chevron) {
+                    row.style.display = 'table-row';
+                    chevron.className = 'fa-solid fa-chevron-up fa-lg';
                 }
             });
         }
@@ -394,11 +406,20 @@
             if (row.style.display === 'none') {
                 row.style.display = 'table-row';
                 chevron.className = 'fa-solid fa-chevron-up fa-lg';
+                openProjectRows.add(id);
             } else {
                 row.style.display = 'none';
                 chevron.className = 'fa-solid fa-chevron-down fa-lg';
+                openProjectRows.delete(id);
             }
         };
+
+        window.toggleTarefaInline = async function(idTarefa, concluida, idProjeto) {
+            await fetch(`http://127.0.0.1:8000/api/v1/tarefas/${idTarefa}/`, { method: 'PATCH', headers: apiHeaders, body: JSON.stringify({ concluida }) });
+            // Garantir que a linha deste projeto fique aberta após o init()
+            openProjectRows.add(idProjeto);
+            await init();
+        }
 
         // Form Projeto
         document.getElementById('form-projeto').addEventListener('submit', async (e) => {
