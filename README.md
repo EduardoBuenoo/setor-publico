@@ -221,10 +221,6 @@ O sistema possui os seguintes Arquivos Lógicos Internos (ALIs):
 
 # 🔗 Links do Projeto
 
-## GitHub
-
-https://github.com/sofia-camargo/setor-publico
-
 ## Cronograma
 
 https://github.com/users/sofia-camargo/projects/2/views/1
