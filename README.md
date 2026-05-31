@@ -1,5 +1,4 @@
 ![Status](https://img.shields.io/badge/STATUS-CONCLUÍDO-success?style=for-the-badge)
-
 <div align="center">
   
 # 🚀 Plataforma Inteligente para Análise e Gestão de Processos
@@ -9,7 +8,6 @@
 ![Python](https://img.shields.io/badge/Python-3.13-blue?logo=python)
 ![Django](https://img.shields.io/badge/Django-REST%20Framework-green?logo=django)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-blue?logo=postgresql)
-![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow)
 ![ODS 9](https://img.shields.io/badge/ODS-9-orange)
 
 Sistema desenvolvido por estudantes do 5º período de Sistemas de Informação da Fundação Hermínio Ometto para apoiar a modernização da gestão pública municipal.
