@@ -6,8 +6,9 @@ Sistema desenvolvido por estudantes do 5° período de Sistemas de Informação,
 
 # 📌 Sobre o Projeto
 
-O projeto foi desenvolvido a partir da disciplica de Projeto Interdisciplinar III, cujo tema é "Plataforma Inteligente para Monitoramento e Otimização de Infraestruturas Sustentáveis", considerando o Objetivo de Desenvolvimento Sustentável (ODS 9). 
-O foco do projeto foi promover uma tecnologia acessível com foco na modernização da gestão pública, permitindo centralizar informações, acompanhar indicadores e otimizar processos internos do departamento.
+O projeto foi desenvolvido no âmbito da disciplina de Projeto Interdisciplinar III, da Fundação Hermínio Ometto, tendo como tema a "Plataforma Inteligente para Monitoramento e Otimização de Infraestruturas Sustentáveis", alinhado ao Objetivo de Desenvolvimento Sustentável (ODS 9) – Indústria, Inovação e Infraestrutura.
+
+Nesse contexto, o projeto teve como objetivo desenvolver uma solução tecnológica acessível para o Departamento de Desenvolvimento Econômico, contribuindo para a modernização da gestão pública. A plataforma proposta busca centralizar informações, facilitar o acompanhamento de indicadores de desempenho e otimizar processos internos do departamento, promovendo maior eficiência operacional, agilidade na tomada de decisões e aprimoramento da gestão por meio da implementação de tecnologias digitais.
 
 A plataforma permite que colaboradores dos setores (como Posto de Atendimento ao Trabalhador, SEBRAE, PROCON e Banco do Povo) registrem suas produções, atividades, projetos e ofícios, enquanto gestores acompanham dados por dashboards e relatórios gerenciais.
 
