@@ -1,172 +1,182 @@
-# Plataforma Inteligente para Análise e Gestão de Processos do Departamento de Desenvolvimento Econômico
+![Status](https://img.shields.io/badge/STATUS-CONCLUÍDO-success?style=for-the-badge)
 
-Sistema desenvolvido por estudantes do 5° período de Sistemas de Informação, para auxiliar o Departamento de Desenvolvimento Econômico da Prefeitura Municipal de Iracemápolis no gerenciamento de indicadores, projetos, ofícios e produtividade dos setores públicos.
+<div align="center">
+  
+# 🚀 Plataforma Inteligente para Análise e Gestão de Processos
+
+### Departamento de Desenvolvimento Econômico • Prefeitura Municipal de Iracemápolis
+
+![Python](https://img.shields.io/badge/Python-3.13-blue?logo=python)
+![Django](https://img.shields.io/badge/Django-REST%20Framework-green?logo=django)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-blue?logo=postgresql)
+![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow)
+![ODS 9](https://img.shields.io/badge/ODS-9-orange)
+
+Sistema desenvolvido por estudantes do 5º período de Sistemas de Informação da Fundação Hermínio Ometto para apoiar a modernização da gestão pública municipal.
+
+</div>
+
+---
+
+## 📋 Sumário
+
+- [📌 Sobre o Projeto](#-sobre-o-projeto)
+- [✨ Funcionalidades](#-funcionalidades)
+- [🛠️ Tecnologias Utilizadas](#️-tecnologias-utilizadas)
+- [🏗️ Arquitetura](#️-arquitetura)
+- [📈 Dashboards](#-dashboards)
+- [🔐 Requisitos Não Funcionais](#-requisitos-não-funcionais)
+- [📡 Endpoints Principais](#-principais-endpoints)
+- [📦 Estrutura de Dados](#-estrutura-de-dados)
+- [🔄 Metodologia](#-metodologia)
+- [👥 Equipe](#-equipe-gafia)
+- [🔗 Links](#-links)
 
 ---
 
 # 📌 Sobre o Projeto
 
-O projeto foi desenvolvido no âmbito da disciplina de Projeto Interdisciplinar III, da Fundação Hermínio Ometto, tendo como tema a "Plataforma Inteligente para Monitoramento e Otimização de Infraestruturas Sustentáveis", alinhado ao Objetivo de Desenvolvimento Sustentável (ODS 9) – Indústria, Inovação e Infraestrutura.
+O projeto foi desenvolvido no âmbito da disciplina de **Projeto Interdisciplinar III**, da Fundação Hermínio Ometto, alinhado ao tema:
 
-Nesse contexto, o projeto teve como objetivo desenvolver uma solução tecnológica acessível para o Departamento de Desenvolvimento Econômico, contribuindo para a modernização da gestão pública. A plataforma proposta busca centralizar informações, facilitar o acompanhamento de indicadores de desempenho e otimizar processos internos do departamento, promovendo maior eficiência operacional, agilidade na tomada de decisões e aprimoramento da gestão por meio da implementação de tecnologias digitais.
+> **Plataforma Inteligente para Monitoramento e Otimização de Infraestruturas Sustentáveis**
 
-A plataforma permite que colaboradores dos setores (como Posto de Atendimento ao Trabalhador, SEBRAE, PROCON e Banco do Povo) registrem suas produções, atividades, projetos e ofícios, enquanto gestores acompanham dados por dashboards e relatórios gerenciais.
+e ao **Objetivo de Desenvolvimento Sustentável (ODS 9) – Indústria, Inovação e Infraestrutura**.
+
+A solução tem como objetivo modernizar os processos do Departamento de Desenvolvimento Econômico por meio da centralização de informações, acompanhamento de indicadores, gestão de projetos e controle documental.
+
+A plataforma permite que colaboradores dos setores:
+
+- 👷🏽 PAT
+- 📈 SEBRAE
+- ⚖️ PROCON
+- 💰 Banco do Povo
+
+registrem atividades, projetos e produções, enquanto gestores acompanham resultados através de dashboards e relatórios gerenciais.
 
 ---
 
-# 👥 Equipe
+# ✨ Funcionalidades
 
-Equipe Gafia:
-
-- Sofia Camargo Nunes
-- Giovana Jacobucci
-- Kael Vicente Dipres
-- Virna Karina do Amaral Pereira
-
----
-
-# 🚀 Funcionalidades
-
-## 👤 Módulo de Usuários
+## 👤 Gestão de Usuários
 
 - Cadastro de usuários
+- Edição de usuários
+- Exclusão de usuários
 - Controle de níveis de acesso
 - Login e autenticação
-- Alteração e redefinição de senha
-- Registro de logs de alteração
-- Consulta e filtro de usuários
-- Exclusão de usuários
+- Alteração de senha
+- Consulta e filtros
 
----
-
-## 📊 Módulo de Indicadores
+## 📊 Gestão de Indicadores
 
 - Cadastro de indicadores
 - Registro de atividades
-- Dashboards gráficos
-- Gráficos automáticos conforme tipo do indicador
+- Dashboards automáticos
 - Cards métricos
-- Filtros por período e setor
+- Filtros por período
+- Filtros por setor
 - Exportação de relatórios PDF
 
----
-
-## 📄 Módulo de Ofícios
+## 📄 Gestão de Ofícios
 
 - Cadastro de ofícios
-- Numeração automática e sequencial
+- Numeração automática
 - Associação automática de usuário e setor
-- Consulta e filtros de ofícios
+- Consulta e filtros
+- Rastreabilidade documental
 
----
-
-## 📁 Módulo de Projetos
+## 📁 Gestão de Projetos
 
 - Cadastro de projetos
 - Gestão de tarefas
 - Controle de prioridade
 - Tags de status
-- Barra de Progresso de Projetos
-- Visualização de cronogramas
-- Controle por setor e nível de acesso
+- Barra de progresso
+- Cronograma de execução
+- Controle por setor
 
 ---
 
 # 🛠️ Tecnologias Utilizadas
 
-## Backend
+<div align="center">
+
+<img src="https://skillicons.dev/icons?i=python,django,postgresql,html,css,js,git,github,vscode" />
+
+</div>
+
+### Backend
 
 - Python
 - Django
 - Django REST Framework
 
-## Frontend
+### Frontend
 
 - HTML5
 - CSS3
 - JavaScript
 
-## Banco de Dados
+### Banco de Dados
 
 - PostgreSQL
+
+### Controle de Versão
+
+- Git
+- GitHub
+
+---
+
+# 🏗️ Arquitetura
+
+```text
+Frontend Web
+      │
+      ▼
+ REST API Django
+      │
+      ▼
+ PostgreSQL
+```
+
+A comunicação ocorre através de requisições HTTP/HTTPS entre cliente e servidor.
+
+---
+
+# 📈 Dashboards
+
+O sistema gera dashboards automaticamente de acordo com o tipo do indicador.
+
+| Tipo do Indicador | Visualização |
+|-------------------|--------------|
+| Número | 📊 Gráfico de Barras |
+| Tempo | 📈 Gráfico de Linha |
+| Porcentagem | 🍩 Gráfico Donut |
 
 ---
 
 # 🔐 Requisitos Não Funcionais
 
-- Autenticação obrigatória
-- Senhas criptografadas
-- Compatibilidade HTTPS
-- Responsividade
-- Integração REST API
-- Interface intuitiva e acessível
+- ✅ Autenticação obrigatória
+- ✅ Senhas criptografadas
+- ✅ Compatibilidade HTTPS
+- ✅ Responsividade
+- ✅ Integração REST API
+- ✅ Interface intuitiva
+- ✅ Controle de permissões
 
 ---
 
-# 🧩 Arquitetura do Sistema
-
-O sistema utiliza arquitetura distribuída baseada em:
-
-- Frontend Web
-- Backend REST API
-- Banco de Dados PostgreSQL
-
-A comunicação ocorre via requisições HTTP/HTTPS entre cliente e servidor.
-
----
-
-# 📈 Dashboards e Indicadores
-
-O sistema gera dashboards automaticamente conforme o tipo de dado do indicador:
-
-| Tipo do Indicador | Tipo de Gráfico |
-|-------------------|----------------|
-| Número            | Barras |
-| Tempo             | Linha |
-| Porcentagem       | Donut |
-
----
-
-# 📂 Estrutura dos Principais Módulos
-
-## Usuários
-Criação e exclusão de usuário, Gerenciamento de acesso e autenticação.
-
-## Indicadores
-Controle de produtividade dos setores.
-
-## Projetos
-Gestão de tarefas e cronogramas.
-
-## Ofícios
-Registro e rastreabilidade documental.
-
----
-
-# 🔄 Metodologia de Desenvolvimento
-
-O projeto utiliza:
-
-- Modelo Evolutivo
-- Metodologia Ágil
-- Scrum
-
-Com reuniões de:
-
-- Sprint Planning
-- Daily Scrum
-- Sprint Review
-- Sprint Retrospective
-
----
-
-# 📡 Endpoints Principais
+# 📡 Principais Endpoints
 
 ## Setores
 
 ```http
 POST /setores/
 GET /setores/
+PUT /setores/{id}/
+DELETE /setores/{id}/
 ```
 
 ## Usuários
@@ -174,6 +184,8 @@ GET /setores/
 ```http
 POST /usuarios/
 GET /usuarios/
+PUT /usuarios/{id}/
+DELETE /usuarios/{id}/
 ```
 
 ## Projetos
@@ -181,11 +193,24 @@ GET /usuarios/
 ```http
 POST /projetos/
 GET /projetos/
+PUT /projetos/{id}/
+DELETE /projetos/{id}/
+```
+
+## Indicadores
+
+```http
+POST /indicadores/
+GET /indicadores/
+PUT /indicadores/{id}/
+DELETE /indicadores/{id}/
 ```
 
 ---
 
-# 📥 Exemplo JSON — Cadastro de Usuário
+# 📥 Exemplo JSON
+
+### Cadastro de Usuário
 
 ```json
 {
@@ -198,31 +223,112 @@ GET /projetos/
 
 ---
 
-# 🗂️ Estrutura de Dados
+# 📦 Estrutura de Dados
 
-O sistema possui os seguintes Arquivos Lógicos Internos (ALIs):
+### Arquivos Lógicos Internos (ALIs)
 
-- Usuários
-- Histórico de Senhas
-- Setores
-- Indicadores
-- Atividades
-- Ofícios
-- Projetos
-- Tarefas
+- 👤 Usuários
+- 🔒 Histórico de Senhas
+- 🏢 Setores
+- 📊 Indicadores
+- 📝 Atividades
+- 📄 Ofícios
+- 📁 Projetos
+- ✅ Tarefas
 
 ---
 
-# 🔗 Links do Projeto
+# 🔄 Metodologia
 
-## Cronograma
+### Modelo de Desenvolvimento
 
-https://github.com/users/sofia-camargo/projects/2/views/1
+- Modelo Evolutivo
+- Scrum
+- Metodologias Ágeis
+
+### Cerimônias
+
+- Sprint Planning
+- Daily Scrum
+- Sprint Review
+- Sprint Retrospective
+
+---
+
+# 👥 Equipe GAFIA
+
+<table>
+<tr>
+<td align="center">
+
+### Sofia Camargo Nunes
+
+<a href="https://www.linkedin.com/in/sofia-camargo-nunes-a64185304/">
+<img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"/>
+</a>
+
+</td>
+
+<td align="center">
+
+### Giovana Jacobucci
+
+<a href="https://www.linkedin.com/in/giovana-jacobucci/">
+<img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"/>
+</a>
+
+</td>
+
+<td align="center">
+
+### Kael Vicente Dipres
+
+<a href="https://www.linkedin.com/in/kael-vicente-dipres-781343385/">
+<img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"/>
+</a>
+
+</td>
+
+<td align="center">
+
+### Virna Karina do Amaral Pereira
+
+<a href="https://www.linkedin.com/in/virna-amaral-39018b298/">
+<img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"/>
+</a>
+
+</td>
+</tr>
+</table>
+
+---
+
+# 🔗 Links
+
+### 📅 Cronograma do Projeto
+
+[📌 Acessar Cronograma](https://github.com/users/sofia-camargo/projects/2/views/1)
 
 ---
 
 # 📚 Considerações Finais
 
-O projeto busca fornecer uma solução tecnológica acessível para modernizar a gestão pública municipal, promovendo maior organização, acompanhamento de produtividade, rastreabilidade documental e apoio à tomada de decisão.
+A plataforma foi concebida para apoiar a transformação digital da administração pública municipal, promovendo:
+
+- Centralização de informações;
+- Monitoramento de indicadores;
+- Gestão de projetos;
+- Rastreabilidade documental;
+- Apoio à tomada de decisões.
+
+Dessa forma, contribui para uma gestão pública mais eficiente, organizada e alinhada aos princípios de inovação tecnológica e desenvolvimento sustentável.
 
 ---
+
+<div align="center">
+
+### 👩🏻‍💻 Desenvolvido pela Equipe GAFIA
+
+**Fundação Hermínio Ometto • Sistemas de Informação • 2026**
+
+</div>
