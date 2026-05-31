@@ -1,7 +1,7 @@
 ![Status](https://img.shields.io/badge/STATUS-CONCLUÍDO-success?style=for-the-badge)
 <div align="center">
   
-# 🚀 Plataforma Inteligente para Análise e Gestão de Processos
+# Plataforma Inteligente para Análise e Gestão de Processos
 
 ### Departamento de Desenvolvimento Econômico • Prefeitura Municipal de Iracemápolis
 
@@ -18,17 +18,17 @@ Sistema desenvolvido por estudantes do 5º período de Sistemas de Informação 
 
 ## 📋 Sumário
 
-- [📌 Sobre o Projeto](#-sobre-o-projeto)
-- [✨ Funcionalidades](#-funcionalidades)
-- [🛠️ Tecnologias Utilizadas](#️-tecnologias-utilizadas)
-- [🏗️ Arquitetura](#️-arquitetura)
-- [📈 Dashboards](#-dashboards)
-- [🔐 Requisitos Não Funcionais](#-requisitos-não-funcionais)
-- [📡 Endpoints Principais](#-principais-endpoints)
-- [📦 Estrutura de Dados](#-estrutura-de-dados)
-- [🔄 Metodologia](#-metodologia)
-- [👥 Equipe](#-equipe-gafia)
-- [🔗 Links](#-links)
+- [Sobre o Projeto](#-sobre-o-projeto)
+- [Funcionalidades](#-funcionalidades)
+- [Tecnologias Utilizadas](#️-tecnologias-utilizadas)
+- [Arquitetura](#️-arquitetura)
+- [Dashboards](#-dashboards)
+- [Requisitos Não Funcionais](#-requisitos-não-funcionais)
+- [Endpoints Principais](#-principais-endpoints)
+- [Estrutura de Dados](#-estrutura-de-dados)
+- [Metodologia](#-metodologia)
+- [Equipe](#-equipe-gafia)
+- [Links](#-links)
 
 ---
 
@@ -126,7 +126,7 @@ registrem atividades, projetos e produções, enquanto gestores acompanham resul
 
 ---
 
-# 🏗️ Arquitetura
+# 🧱 Arquitetura
 
 ```text
 Frontend Web
@@ -218,21 +218,6 @@ DELETE /indicadores/{id}/
   "id_setor": 1
 }
 ```
-
----
-
-# 📦 Estrutura de Dados
-
-### Arquivos Lógicos Internos (ALIs)
-
-- 👤 Usuários
-- 🔒 Histórico de Senhas
-- 🏢 Setores
-- 📊 Indicadores
-- 📝 Atividades
-- 📄 Ofícios
-- 📁 Projetos
-- ✅ Tarefas
 
 ---
 
