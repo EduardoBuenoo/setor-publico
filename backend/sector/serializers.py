@@ -15,3 +15,9 @@ class AtividadeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Atividade
         fields = '__all__'
+
+    def validate_data_cadastro(self, value):
+        from datetime import date
+        if value > date.today():
+            raise serializers.ValidationError("A data de cadastro não pode ser no futuro.")
+        return value

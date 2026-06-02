@@ -284,25 +284,13 @@
                 if(total > 0){
                     tarefas.forEach(t => {
                         if (t.concluida) {
-                            if (t.data_fim && t.data_fim >= hoje) {
-                                contVerde++;
-                            } else {
-                                // wait, if concluded after data_fim? The requirement doesn't track "data_conclusao". 
-                                // "verde concluida dentro do prazo, vermelho como cumprido com atraso".
-                                // We don't have "data_conclusao". So let's say if `concluida`, it was on time if we don't have data_conclusao. 
-                                // Actually we added `data_conclusao` to the model in previous fix!
-                                if (t.data_conclusao && t.data_conclusao > t.data_fim) {
-                                    contVermelho++;
-                                } else {
-                                    contVerde++;
-                                }
-                            }
-                        } else {
-                            if (t.data_fim && t.data_fim < hoje) {
+                            if (t.data_conclusao && t.data_fim && t.data_conclusao > t.data_fim) {
                                 contVermelho++;
                             } else {
-                                contAmarelo++;
+                                contVerde++;
                             }
+                        } else {
+                            contAmarelo++;
                         }
                     });
                 }
@@ -337,8 +325,10 @@
                                     <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.5rem;">
                                         <span style="color: #fff;">Progresso</span> <span style="color: #10b981; font-weight: bold;">${concluidas} / ${total}</span>
                                     </div>
-                                    <div style="width: 100%; background: rgba(255, 255, 255, 0.1); border-radius: 8px; height: 12px; overflow: hidden; margin-bottom: 0.5rem;">
-                                        <div style="width: ${total > 0 ? (concluidas/total)*100 : 0}%; background: ${total > 0 && concluidas === total ? 'var(--status_tag-green)' : 'var(--primary-color)'}; height: 100%; transition: width 0.5s ease-in-out; border-radius: 8px;"></div>
+                                    <div style="width: 100%; background: rgba(255, 255, 255, 0.1); border-radius: 8px; height: 12px; overflow: hidden; margin-bottom: 0.5rem; display: flex;">
+                                        <div style="width: ${total > 0 ? (contVerde/total)*100 : 0}%; background: #10b981; height: 100%; transition: width 0.5s ease-in-out;" title="${contVerde} no prazo"></div>
+                                        <div style="width: ${total > 0 ? (contVermelho/total)*100 : 0}%; background: #ef4444; height: 100%; transition: width 0.5s ease-in-out;" title="${contVermelho} com atraso"></div>
+                                        <div style="width: ${total > 0 ? (contAmarelo/total)*100 : 0}%; background: #eab308; height: 100%; transition: width 0.5s ease-in-out;" title="${contAmarelo} pendentes"></div>
                                     </div>
                                     <div style="font-size: 0.75rem; color: #94a3b8; text-align: right;">
                                         ${total > 0 ? Math.round((concluidas/total)*100) : 0}% Concluído
