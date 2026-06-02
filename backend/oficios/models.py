@@ -1,14 +1,15 @@
 from django.db import models
+from users.models import Users
+from sector.models import Sector
 
 class Oficios(models.Model):
-    numero_oficio = models.IntegerField()
+    id_oficio = models.AutoField(primary_key=True)
+    numero_sequencial = models.IntegerField()
     ano = models.IntegerField()
-    data_registro = models.DateField()
-    assunto = models.TextField()
-    id_usuario = models.IntegerField()
-    id_setor = models.IntegerField()
-    local_fisico = models.CharField(max_length=255, blank=True, null=True)
+    assunto = models.CharField(max_length=255)
+    data_oficio = models.DateField()
+    id_usuario = models.ForeignKey(Users, on_delete=models.CASCADE, db_column='id_usuario', null=True, blank=True)
+    id_setor = models.ForeignKey(Sector, on_delete=models.CASCADE, db_column='id_setor', null=True, blank=True)
 
     class Meta:
         db_table = 'oficios'
-        managed = False

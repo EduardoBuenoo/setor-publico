@@ -198,9 +198,9 @@
                 const filterSetor = document.getElementById('filter_setor');
                 if(selSetor) selSetor.innerHTML = '';
                 setores.forEach(s => {
-                    setoresMap[s.id] = s.nome_setor;
-                    if(selSetor) selSetor.innerHTML += `<option value="${s.id}">${s.nome_setor}</option>`;
-                    if(filterSetor) filterSetor.innerHTML += `<option value="${s.id}">${s.nome_setor}</option>`;
+                    setoresMap[s.id_setor] = s.nome;
+                    if(selSetor) selSetor.innerHTML += `<option value="${s.id_setor}">${s.nome}</option>`;
+                    if(filterSetor) filterSetor.innerHTML += `<option value="${s.id_setor}">${s.nome}</option>`;
                 });
                 
                 if (user.nivel_acesso === 'Gestor') {
@@ -252,11 +252,11 @@
                 let acoesHtml = '';
                 // Admin e Gestor podem redefinir senha (RN03)
                 if (user.nivel_acesso === 'Administrador' || (user.nivel_acesso === 'Gestor' && u.id_setor === user.id_setor)) {
-                    acoesHtml += `<button class="btn btn-sm" style="background: var(--status-yellow); color: #000; margin-right: 4px;" onclick="abrirModalSenha(${u.id}, '${u.nome}')" title="Redefinir Senha"><i class="fa-solid fa-key"></i></button>`;
+                    acoesHtml += `<button class="btn btn-sm" style="background: var(--status-yellow); color: #000; margin-right: 4px;" onclick="abrirModalSenha(${u.id_usuario}, '${u.nome}')" title="Redefinir Senha"><i class="fa-solid fa-key"></i></button>`;
                 }
                 // Apenas Admin pode excluir (RN01)
                 if (user.nivel_acesso === 'Administrador') {
-                    acoesHtml += `<button class="btn btn-sm" style="background: var(--status-red); color: #fff;" onclick="excluirUsuario(${u.id})" title="Excluir"><i class="fa-solid fa-trash"></i></button>`;
+                    acoesHtml += `<button class="btn btn-sm" style="background: var(--status-red); color: #fff;" onclick="excluirUsuario(${u.id_usuario})" title="Excluir"><i class="fa-solid fa-trash"></i></button>`;
                 }
                 acoesHtml = `<td>${acoesHtml}</td>`;
                 
@@ -349,7 +349,7 @@
                     headers: apiHeaders, 
                     body: JSON.stringify({
                         user_id_alvo: id,
-                        user_id_admin: user.id,
+                        user_id_admin: user.id_usuario,
                         nova_senha: senha
                     }) 
                 });

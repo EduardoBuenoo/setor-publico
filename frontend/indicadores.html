@@ -281,7 +281,7 @@
                 }
                 const usuariosRes = await fetch('http://127.0.0.1:8000/api/v1/usuarios/', { headers: apiHeaders });
                 const indicadoresRes = await fetch('http://127.0.0.1:8000/api/v1/indicadores/', { headers: apiHeaders });
-                const valoresRes = await fetch('http://127.0.0.1:8000/api/v1/indicadores-valores/', { headers: apiHeaders });
+                const valoresRes = await fetch('http://127.0.0.1:8000/api/v1/atividades/', { headers: apiHeaders });
                 
                 const setores = await setoresRes.json();
                 const usuarios = await usuariosRes.json();
@@ -291,11 +291,11 @@
                 const selSetor = document.getElementById('id_setor');
                 const relSetor = document.getElementById('relSetor');
                 setores.forEach(s => {
-                    setoresMap[s.id] = s.nome_setor;
-                    if(selSetor) selSetor.innerHTML += `<option value="${s.id}">${s.nome_setor}</option>`;
-                    if(relSetor) relSetor.innerHTML += `<option value="${s.id}">${s.nome_setor}</option>`;
+                    setoresMap[s.id_setor] = s.nome;
+                    if(selSetor) selSetor.innerHTML += `<option value="${s.id_setor}">${s.nome}</option>`;
+                    if(relSetor) relSetor.innerHTML += `<option value="${s.id_setor}">${s.nome}</option>`;
                 });
-                usuarios.forEach(u => usuariosMap[u.id] = u.nome);
+                usuarios.forEach(u => usuariosMap[u.id_usuario] = u.nome);
 
                 renderIndicadores();
                 preencherFiltrosRelatorio();
@@ -306,7 +306,7 @@
             const relInd = document.getElementById('relIndicador');
             relInd.innerHTML = '<option value="todos">Todos os Indicadores</option>';
             indicadoresData.forEach(ind => {
-                relInd.innerHTML += `<option value="${ind.id}">${ind.nome}</option>`;
+                relInd.innerHTML += `<option value="${ind.id_indicador}">${ind.nome}</option>`;
             });
             const today = new Date().toISOString().split('T')[0];
             const primeiroDiaMes = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
@@ -348,21 +348,21 @@
             });
 
             indicadoresData.forEach(ind => {
-                const sfx = getSufixo(ind.tipo);
-                const valorAtual = totais[ind.id] || 0;
+                const sfx = getSufixo(ind.tipo_dado);
+                const valorAtual = totais[ind.id_indicador] || 0;
                 
                 container.innerHTML += `
                     <div class="card-indicador">
                         <div class="card-header" style="align-items: center;">
                             <h3 class="card-title">${ind.nome}</h3>
                             <div style="display: flex; gap: 0.75rem; align-items: center;">
-                                <button title="Ver Histórico/Gráfico" style="background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.6); font-size: 1.5rem; transition: color 0.2s, transform 0.2s;" onmouseover="this.style.color='var(--primary-color)'; this.style.transform='scale(1.1)'" onmouseout="this.style.color='rgba(255,255,255,0.6)'; this.style.transform='scale(1)'" onclick='abrirModalHistorico(${ind.id}, "${ind.nome}", "${sfx}")'>
+                                <button title="Ver Histórico/Gráfico" style="background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.6); font-size: 1.5rem; transition: color 0.2s, transform 0.2s;" onmouseover="this.style.color='var(--primary-color)'; this.style.transform='scale(1.1)'" onmouseout="this.style.color='rgba(255,255,255,0.6)'; this.style.transform='scale(1)'" onclick='abrirModalHistorico(${ind.id_indicador}, "${ind.nome}", "${sfx}")'>
                                     <i class="fa-solid fa-chart-line"></i>
                                 </button>
                             </div>
                         </div>
                         <div class="card-meta" style="display:flex; justify-content:space-between; width:100%;">
-                            <span><i class="fa-solid fa-info-circle"></i> Tipo: ${ind.tipo}</span>
+                            <span><i class="fa-solid fa-info-circle"></i> Tipo: ${ind.tipo_dado}</span>
                             <span class="status-tag status-encerrado" style="font-size:0.75rem; padding: 2px 6px;">${setoresMap[ind.id_setor] || 'Sem Setor'}</span>
                         </div>
                         <div class="card-value">
@@ -370,7 +370,7 @@
                         </div>
                         
                         <div class="action-row" style="margin-top: auto; padding-top: 1rem;">
-                            <button class="add-btn" style="width: 100%; display: flex; justify-content: center; background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); font-size: 0.95rem; padding: 0.75rem;" onmouseover="this.style.background='var(--primary-color)'; this.style.color='#fff';" onmouseout="this.style.background='rgba(59, 130, 246, 0.15)'; this.style.color='#60a5fa';" onclick="abrirModalLancamento(${ind.id}, '${ind.nome}')">
+                            <button class="add-btn" style="width: 100%; display: flex; justify-content: center; background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); font-size: 0.95rem; padding: 0.75rem;" onmouseover="this.style.background='var(--primary-color)'; this.style.color='#fff';" onmouseout="this.style.background='rgba(59, 130, 246, 0.15)'; this.style.color='#60a5fa';" onclick="abrirModalLancamento(${ind.id_indicador}, '${ind.nome}')">
                                 <i class="fa-solid fa-plus"></i> Lançar Produção
                             </button>
                         </div>
@@ -419,14 +419,14 @@
                         const displayLancado = isAjuste ? `<span style="font-size:0.8rem; color:#94a3b8;">Definido:</span> ${v.valor}` : `+${v.valor}`;
                         
                         // Actions se for o autor
-                        const actionBtns = (v.id_usuario === user.id) 
+                        const actionBtns = (v.id_usuario === user.id_usuario) 
                             ? `<button onclick="editarLancamento(${v.id}, ${v.valor})" style="background:none; border:none; color:#3b82f6; cursor:pointer; margin-left: 10px;" title="Editar meu lançamento"><i class="fa-solid fa-pen"></i></button>
                                <button onclick="deletarLancamento(${v.id})" style="background:none; border:none; color:#ef4444; cursor:pointer; margin-left: 10px;" title="Remover meu lançamento"><i class="fa-solid fa-trash"></i></button>`
                             : '';
                         
                         tbody.innerHTML += `
                             <tr>
-                                <td>${formatData(v.data_registro)}</td>
+                                <td>${formatData(v.data_cadastro)}</td>
                                 ${tdResponsavel}
                                 <td>${acaoTag}${actionBtns}</td>
                                 <td style="text-align: right; font-weight: bold;">${displayLancado}${sufixo}</td>
@@ -527,7 +527,7 @@
 
             const body = {
                 nome: document.getElementById('nome_indicador').value,
-                tipo: document.getElementById('tipo_indicador').value,
+                tipo_dado: document.getElementById('tipo_indicador').value,
                 id_setor: idSetorParsed || null
             };
             
@@ -562,12 +562,12 @@
             try {
                 const body = {
                     id_indicador: parseInt(idIndicador),
-                    id_usuario: user.id,
+                    id_usuario: user.id_usuario,
                     valor: valor,
-                    data_registro: dataRegistro,
+                    data_cadastro: dataRegistro,
                     tipo_registro: 'lancamento'
                 };
-                const res = await fetch('http://127.0.0.1:8000/api/v1/indicadores-valores/', { method: 'POST', headers: apiHeaders, body: JSON.stringify(body) });
+                const res = await fetch('http://127.0.0.1:8000/api/v1/atividades/', { method: 'POST', headers: apiHeaders, body: JSON.stringify(body) });
                 if (res.status === 401) {
                     alert("Sua sessão expirou. Faça login novamente.");
                     window.location.href = 'index.html';
@@ -589,7 +589,7 @@
                 return;
             }
             try {
-                const res = await fetch(`http://127.0.0.1:8000/api/v1/indicadores-valores/${id}/`, { method: 'PATCH', headers: apiHeaders, body: JSON.stringify({ valor: floatVal }) });
+                const res = await fetch(`http://127.0.0.1:8000/api/v1/atividades/${id}/`, { method: 'PATCH', headers: apiHeaders, body: JSON.stringify({ valor: floatVal }) });
                 if(res.ok) {
                     mostrarAlerta("Lançamento atualizado com sucesso!");
                     fecharModal('modal-historico');
@@ -605,7 +605,7 @@
         window.deletarLancamento = async function(id) {
             if(!confirm("Tem certeza que deseja remover este lançamento? O total do indicador será recalculado.")) return;
             try {
-                const res = await fetch(`http://127.0.0.1:8000/api/v1/indicadores-valores/${id}/`, { method: 'DELETE', headers: apiHeaders });
+                const res = await fetch(`http://127.0.0.1:8000/api/v1/atividades/${id}/`, { method: 'DELETE', headers: apiHeaders });
                 if(res.ok) {
                     mostrarAlerta("Lançamento removido com sucesso!");
                     fecharModal('modal-historico');
@@ -628,12 +628,12 @@
             
             // Filtrar Registros
             let registrosFiltrados = rawValores.filter(v => {
-                const isDateInRange = v.data_registro >= dataIni && v.data_registro <= dataFim;
+                const isDateInRange = v.data_cadastro >= dataIni && v.data_cadastro <= dataFim;
                 if(!isDateInRange) return false;
                 
                 if (indFiltro !== 'todos' && v.id_indicador.toString() !== indFiltro) return false;
                 
-                const indBase = indicadoresData.find(i => i.id === v.id_indicador);
+                const indBase = indicadoresData.find(i => i.id_indicador === v.id_indicador);
                 if (!indBase) return false;
                 
                 const setorConsiderado = (user.nivel_acesso === 'Administrador' && setorFiltro !== 'todos') 
@@ -648,15 +648,15 @@
             // Resumo
             let resumoMap = {};
             registrosFiltrados.forEach(v => {
-                const indBase = indicadoresData.find(i => i.id === v.id_indicador);
+                const indBase = indicadoresData.find(i => i.id_indicador === v.id_indicador);
                 if(!resumoMap[v.id_indicador]) {
                     resumoMap[v.id_indicador] = {
                         nome: indBase ? indBase.nome : 'Desconhecido',
-                        tipo: indBase ? indBase.tipo : '',
+                        tipo: indBase ? indBase.tipo_dado : '',
                         setor: indBase ? (setoresMap[indBase.id_setor] || '') : '',
                         soma: 0,
                         qtd: 0,
-                        sufixo: indBase ? getSufixo(indBase.tipo) : ''
+                        sufixo: indBase ? getSufixo(indBase.tipo_dado) : ''
                     };
                 }
                 resumoMap[v.id_indicador].soma += parseFloat(v.valor);
@@ -689,7 +689,7 @@
             doc.setFontSize(10);
             doc.setFont("helvetica", "normal");
             const nomeSetor = setorFiltro === 'todos' ? 'Todos os Setores' : setoresMap[setorFiltro];
-            const nomeInd = indFiltro === 'todos' ? 'Todos os Indicadores' : indicadoresData.find(i=>i.id.toString()===indFiltro)?.nome;
+            const nomeInd = indFiltro === 'todos' ? 'Todos os Indicadores' : indicadoresData.find(i=>i.id_indicador.toString()===indFiltro)?.nome;
             doc.text(`Período: ${formatData(dataIni)} a ${formatData(dataFim)} | Setor: ${nomeSetor} | Indicador: ${nomeInd}`, doc.internal.pageSize.getWidth()/2, 117, {align: 'center'});
             
             // Tabela 1: Resumo
@@ -723,12 +723,12 @@
             doc.setFont("helvetica", "bold");
             doc.text("2. Histórico de Registros no Período", 40, finalY);
             
-            const historicoRows = registrosFiltrados.sort((a,b) => new Date(b.data_registro) - new Date(a.data_registro)).map(v => {
-                const indBase = indicadoresData.find(i => i.id === v.id_indicador);
-                const sfx = indBase ? getSufixo(indBase.tipo) : '';
+            const historicoRows = registrosFiltrados.sort((a,b) => new Date(b.data_cadastro) - new Date(a.data_cadastro)).map(v => {
+                const indBase = indicadoresData.find(i => i.id_indicador === v.id_indicador);
+                const sfx = indBase ? getSufixo(indBase.tipo_dado) : '';
                 const setorStr = indBase ? (setoresMap[indBase.id_setor] || '') : '';
                 return [
-                    formatData(v.data_registro),
+                    formatData(v.data_cadastro),
                     indBase ? indBase.nome : 'Desconhecido',
                     usuariosMap[v.id_usuario] || 'Desconhecido',
                     setorStr,

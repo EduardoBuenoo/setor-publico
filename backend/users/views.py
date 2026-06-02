@@ -1,5 +1,5 @@
 from rest_framework import generics
-from .models import Users, ResetSenhaLog
+from .models import Users, HistoricoSenhas
 from .serializers import UsersSerializer
 
 class UsersCreateListView(generics.ListCreateAPIView):
@@ -29,16 +29,16 @@ class CustomLoginView(APIView):
 
         try:
             user = Users.objects.get(matricula=matricula)
-            if bcrypt.checkpw(senha.encode('utf-8'), user.senha.encode('utf-8')):
+            if bcrypt.checkpw(senha.encode('utf-8'), user.senha_hash.encode('utf-8')):
                 refresh = RefreshToken()
-                refresh['user_id'] = user.id
+                refresh['user_id'] = user.id_usuario
                 return Response({
                     'access': str(refresh.access_token),
                     'user': {
-                        'id': user.id,
+                        'id_usuario': user.id_usuario,
                         'nome': user.nome,
                         'nivel_acesso': user.nivel_acesso,
-                        'id_setor': user.id_setor.id if user.id_setor else None
+                        'id_setor': user.id_setor.id_setor if user.id_setor else None
                     }
                 })
             else:
@@ -56,11 +56,11 @@ class AlterarSenhaPropriaView(APIView):
         nova_senha = request.data.get('nova_senha')
         
         try:
-            user = Users.objects.get(id=user_id)
-            if not bcrypt.checkpw(senha_atual.encode('utf-8'), user.senha.encode('utf-8')):
+            user = Users.objects.get(id_usuario=user_id)
+            if not bcrypt.checkpw(senha_atual.encode('utf-8'), user.senha_hash.encode('utf-8')):
                 return Response({'error': 'Senha atual incorreta'}, status=status.HTTP_400_BAD_REQUEST)
             
-            serializer = UsersSerializer(user, data={'senha': nova_senha}, partial=True)
+            serializer = UsersSerializer(user, data={'senha_hash': nova_senha}, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response({'message': 'Senha alterada com sucesso'})
@@ -77,18 +77,18 @@ class RedefinirSenhaAdminView(APIView):
         nova_senha = request.data.get('nova_senha')
         
         try:
-            alvo = Users.objects.get(id=user_id_alvo)
-            admin = Users.objects.get(id=user_id_admin)
+            alvo = Users.objects.get(id_usuario=user_id_alvo)
+            admin = Users.objects.get(id_usuario=user_id_admin)
             
             # RN03 - Gestor apenas do seu setor
             if admin.nivel_acesso == 'Gestor' and alvo.id_setor != admin.id_setor:
                 return Response({'error': 'Gestor não tem permissão para alterar senha deste setor.'}, status=status.HTTP_403_FORBIDDEN)
                 
-            serializer = UsersSerializer(alvo, data={'senha': nova_senha}, partial=True)
+            serializer = UsersSerializer(alvo, data={'senha_hash': nova_senha}, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 # Logar a alteracao
-                ResetSenhaLog.objects.create(id_usuario_alvo=alvo, id_responsavel=admin)
+                HistoricoSenhas.objects.create(id_usuario=alvo, id_responsavel=admin)
                 return Response({'message': 'Senha redefinida com sucesso'})
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Users.DoesNotExist:

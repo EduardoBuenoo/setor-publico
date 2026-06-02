@@ -220,9 +220,9 @@
 
                 const selSetor = document.getElementById('filter_setor');
                 setores.forEach(s => {
-                    setoresMap[s.id] = s.nome_setor;
-                    if(user.nivel_acesso === 'Administrador' || s.id === user.id_setor){
-                        selSetor.innerHTML += `<option value="${s.id}">${s.nome_setor}</option>`;
+                    setoresMap[s.id_setor] = s.nome;
+                    if(user.nivel_acesso === 'Administrador' || s.id_setor === user.id_setor){
+                        selSetor.innerHTML += `<option value="${s.id_setor}">${s.nome}</option>`;
                     }
                 });
 
@@ -233,7 +233,7 @@
                     selSetor.style.color = 'rgba(255,255,255,0.6)';
                 }
 
-                usuarios.forEach(u => usuariosMap[u.id] = u.nome);
+                usuarios.forEach(u => usuariosMap[u.id_usuario] = u.nome);
 
                 oficiosList = oficios;
                 renderTabela();
@@ -257,7 +257,7 @@
             }
 
             if (filtro_num) {
-                filtrados = filtrados.filter(o => o.numero_oficio.toString() === filtro_num);
+                filtrados = filtrados.filter(o => o.numero_sequencial.toString() === filtro_num);
             }
 
             if(filtrados.length === 0) {
@@ -266,7 +266,7 @@
             }
 
             filtrados.forEach(o => {
-                const numAno = `${strPadLeft(o.numero_oficio, '0', 4)}/${o.ano}`;
+                const numAno = `${strPadLeft(o.numero_sequencial, '0', 4)}/${o.ano}`;
                 const assuntoResumo = o.assunto.length > 40 ? o.assunto.substring(0, 40) + '...' : o.assunto;
                 
                 // Vamos converter o objeto do ofício para JSON seguro e injetar no botão
@@ -275,7 +275,7 @@
                 tbody.innerHTML += `
                     <tr>
                         <td><strong>${numAno}</strong></td>
-                        <td>${formatData(o.data_registro)}</td>
+                        <td>${formatData(o.data_oficio)}</td>
                         <td>${assuntoResumo}</td>
                         <td style="text-align: right;">
                             <button class="btn btn-primary" onclick="abrirDetalhes(${objJson})" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
@@ -288,7 +288,7 @@
         }
 
         function abrirDetalhes(o) {
-            const numAno = `${strPadLeft(o.numero_oficio, '0', 4)}/${o.ano}`;
+            const numAno = `${strPadLeft(o.numero_sequencial, '0', 4)}/${o.ano}`;
             const nomeSetor = setoresMap[o.id_setor] || 'Desconhecido';
             const autor = usuariosMap[o.id_usuario] || 'Desconhecido';
             
@@ -297,7 +297,7 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
                     <div class="oficio-detail-row">
                         <span class="oficio-detail-label">Data de Registro</span>
-                        <span class="oficio-detail-value"><i class="fa-regular fa-calendar" style="color: #60a5fa;"></i> ${formatData(o.data_registro)}</span>
+                        <span class="oficio-detail-value"><i class="fa-regular fa-calendar" style="color: #60a5fa;"></i> ${formatData(o.data_oficio)}</span>
                     </div>
                     <div class="oficio-detail-row">
                         <span class="oficio-detail-label">Setor</span>
@@ -345,7 +345,7 @@
                 assunto: document.getElementById('assunto').value,
                 local_fisico: document.getElementById('local_fisico').value,
                 id_setor: user.id_setor,
-                id_usuario: user.id
+                id_usuario: user.id_usuario
             };
             try {
                 const res = await fetch('http://127.0.0.1:8000/api/v1/oficios/', { method: 'POST', headers: apiHeaders, body: JSON.stringify(body) });

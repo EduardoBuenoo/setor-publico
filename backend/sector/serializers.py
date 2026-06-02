@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Sector, Indicador, IndicadorValor, Atividade
+from .models import Sector, Indicador, Atividade
 
 class SectorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,11 +9,6 @@ class SectorSerializer(serializers.ModelSerializer):
 class IndicadorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Indicador
-        fields = '__all__'
-
-class IndicadorValorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = IndicadorValor
         fields = '__all__'
 
 class AtividadeSerializer(serializers.ModelSerializer):

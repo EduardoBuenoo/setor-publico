@@ -144,7 +144,7 @@
                 const [setoresRes, indRes, valRes, usrRes] = await Promise.all([
                     fetch('http://127.0.0.1:8000/api/v1/setores/', { headers: apiHeaders }),
                     fetch('http://127.0.0.1:8000/api/v1/indicadores/', { headers: apiHeaders }),
-                    fetch('http://127.0.0.1:8000/api/v1/indicadores-valores/', { headers: apiHeaders }),
+                    fetch('http://127.0.0.1:8000/api/v1/atividades/', { headers: apiHeaders }),
                     fetch('http://127.0.0.1:8000/api/v1/usuarios/', { headers: apiHeaders })
                 ]);
                 
@@ -156,12 +156,12 @@
                 // Setup Select Setor
                 const selSetor = document.getElementById('filter_setor');
                 rawSetores.forEach(s => {
-                    setoresMap[s.id] = s.nome_setor;
-                    selSetor.innerHTML += `<option value="${s.id}">${s.nome_setor}</option>`;
+                    setoresMap[s.id_setor] = s.nome;
+                    selSetor.innerHTML += `<option value="${s.id_setor}">${s.nome}</option>`;
                 });
                 
                 rawUsuarios.forEach(u => {
-                    usuarioSetorMap[u.id] = u.id_setor;
+                    usuarioSetorMap[u.id_usuario] = u.id_setor;
                 });
                 
                 if (user.nivel_acesso === 'Administrador') {
@@ -262,16 +262,16 @@
 
             indicadoresFiltrados.forEach(ind => {
                 // Filtrar valores para este indicador
-                let valores = rawValores.filter(v => v.id_indicador === ind.id);
-                if (filterInicio) valores = valores.filter(v => v.data_registro >= filterInicio);
-                if (filterFinal) valores = valores.filter(v => v.data_registro <= filterFinal);
+                let valores = rawValores.filter(v => v.id_indicador === ind.id_indicador);
+                if (filterInicio) valores = valores.filter(v => v.data_cadastro >= filterInicio);
+                if (filterFinal) valores = valores.filter(v => v.data_cadastro <= filterFinal);
                 
                 if (valores.length === 0) return;
 
                 // RF17, RF18, RF19, RN13: Automático pelo tipo
                 let chartType = 'bar'; // Default (Quantidade)
-                if (ind.tipo === 'Horários' || ind.tipo === 'Tempo') chartType = 'line';
-                if (ind.tipo === 'Porcentagem') chartType = 'doughnut';
+                if (ind.tipo_dado === 'Horários' || ind.tipo_dado === 'Tempo') chartType = 'line';
+                if (ind.tipo_dado === 'Porcentagem') chartType = 'doughnut';
 
                 let labels = [];
                 let dataPoints = [];
@@ -280,7 +280,7 @@
                     // RF19: Percentuais. Grfico Rosca agrupado por usuário (mostra a proporo entre a equipe)
                     let userTotals = {};
                     valores.forEach(v => {
-                        const userName = rawUsuarios.find(u => u.id === v.id_usuario)?.nome || 'Desconhecido';
+                        const userName = rawUsuarios.find(u => u.id_usuario === v.id_usuario)?.nome || 'Desconhecido';
                         if(!userTotals[userName]) userTotals[userName] = 0;
                         userTotals[userName] += parseFloat(v.valor);
                     });
@@ -290,7 +290,7 @@
                     // RF27: Histórico evolução. Agrupado por Ms/Ano (Ex: "2026-05")
                     let mesTotals = {};
                     valores.forEach(v => {
-                        const mes = v.data_registro.substring(0, 7); // YYYY-MM
+                        const mes = v.data_cadastro.substring(0, 7); // YYYY-MM
                         if(!mesTotals[mes]) mesTotals[mes] = 0;
                         mesTotals[mes] += parseFloat(v.valor);
                     });
@@ -312,7 +312,7 @@
                 const canvasId = `graficoInd${chartIdx}`;
                 divBox.innerHTML = `
                     <h4 style="text-align: center; margin-bottom: 0.5rem; color: #fff; font-size: 1.05rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.75rem;">
-                        ${ind.nome} (${ind.tipo})
+                        ${ind.nome} (${ind.tipo_dado})
                     </h4>
                     <div style="height: 280px; position: relative; overflow: hidden; width: 100%; display: flex; justify-content: center;">
                         <canvas id="${canvasId}"></canvas>

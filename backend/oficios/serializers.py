@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from sector.models import Oficio
+from .models import Oficios
 
 class OficiosSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Oficio
+        model = Oficios
         fields = '__all__'
-        read_only_fields = ['numero_oficio', 'ano', 'data_registro']
+        read_only_fields = ['numero_sequencial', 'ano', 'data_oficio']

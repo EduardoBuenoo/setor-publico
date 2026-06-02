@@ -4,16 +4,16 @@ import re
 from rest_framework.exceptions import ValidationError
 
 class UsersSerializer(serializers.ModelSerializer):
-    nome_setor = serializers.CharField(source='id_setor.nome_setor', read_only=True)
+    nome_setor = serializers.CharField(source='id_setor.nome', read_only=True)
 
     class Meta:
         model = Users
-        fields = ['id', 'matricula', 'nome', 'funcao', 'id_setor', 'nome_setor', 'nivel_acesso', 'senha']
+        fields = ['id_usuario', 'matricula', 'nome', 'funcao', 'id_setor', 'nome_setor', 'nivel_acesso', 'senha_hash']
         extra_kwargs = {
-            'senha': {'write_only': True}
+            'senha_hash': {'write_only': True}
         }
 
-    def validate_senha(self, value):
+    def validate_senha_hash(self, value):
         if len(value) < 6:
             raise ValidationError("A senha deve ter no mínimo 6 caracteres.")
         if not re.search(r'[A-Z]', value):
@@ -28,14 +28,14 @@ class UsersSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         import bcrypt
-        if 'senha' in validated_data:
-            senha = validated_data['senha']
-            validated_data['senha'] = bcrypt.hashpw(senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        if 'senha_hash' in validated_data:
+            senha = validated_data['senha_hash']
+            validated_data['senha_hash'] = bcrypt.hashpw(senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
         import bcrypt
-        if 'senha' in validated_data:
-            senha = validated_data['senha']
-            validated_data['senha'] = bcrypt.hashpw(senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        if 'senha_hash' in validated_data:
+            senha = validated_data['senha_hash']
+            validated_data['senha_hash'] = bcrypt.hashpw(senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         return super().update(instance, validated_data)

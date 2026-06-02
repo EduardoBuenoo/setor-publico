@@ -65,7 +65,7 @@
                         <div class="grid-form">
                             <div class="form-group">
                                 <label class="form-label">Setor</label>
-                                <input type="text" id="nome_setor" class="form-control readonly-field" readonly>
+                                <input type="text" id="nome" class="form-control readonly-field" readonly>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Departamento</label>
@@ -132,7 +132,7 @@
                 const res = await fetch(`http://127.0.0.1:8000/api/v1/setores/${user.id_setor}/`, { headers: apiHeaders });
                 if(res.ok) {
                     const data = await res.json();
-                    document.getElementById('nome_setor').value = data.nome_setor;
+                    document.getElementById('nome').value = data.nome;
                     document.getElementById('nome_departamento').value = data.nome_departamento || 'Não informado';
                 }
             } catch(e) {}
@@ -154,7 +154,7 @@
                 funcao: document.getElementById('funcao').value
             };
             try {
-                const res = await fetch(`http://127.0.0.1:8000/api/v1/usuarios/${user.id}/`, { method: 'PATCH', headers: apiHeaders, body: JSON.stringify(body) });
+                const res = await fetch(`http://127.0.0.1:8000/api/v1/usuarios/${user.id_usuario}/`, { method: 'PATCH', headers: apiHeaders, body: JSON.stringify(body) });
                 if(res.ok) {
                     mostrarAlerta("Perfil atualizado!", "alert-success");
                     user.nome = body.nome;
@@ -171,7 +171,7 @@
         document.getElementById('form-senha').addEventListener('submit', async (e) => {
             e.preventDefault();
             const body = { 
-                user_id: user.id,
+                user_id: user.id_usuario,
                 senha_atual: document.getElementById('senha_atual').value,
                 nova_senha: document.getElementById('nova_senha').value 
             };
