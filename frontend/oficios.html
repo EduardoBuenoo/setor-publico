@@ -341,11 +341,9 @@
 
         document.getElementById('form-oficio').addEventListener('submit', async (e) => {
             e.preventDefault();
+            // RF31: usuário e setor são definidos pelo backend a partir do JWT.
             const body = {
-                assunto: document.getElementById('assunto').value,
-                local_fisico: document.getElementById('local_fisico').value,
-                id_setor: user.id_setor,
-                id_usuario: user.id_usuario
+                assunto: document.getElementById('assunto').value
             };
             try {
                 const res = await fetch('http://127.0.0.1:8000/api/v1/oficios/', { method: 'POST', headers: apiHeaders, body: JSON.stringify(body) });

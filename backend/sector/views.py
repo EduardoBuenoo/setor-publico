@@ -1,30 +1,64 @@
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated  # <-- 1. IMPORTA O CADEADO
-from .models import Sector
-from .serializers import SectorSerializer
+from rest_framework.permissions import IsAuthenticated
 
-# View para listar todos os setores e criar um novo
+from .models import Sector, Indicador, Atividade
+from .serializers import SectorSerializer, IndicadorSerializer, AtividadeSerializer
+
+
 class SectorCreateListView(generics.ListCreateAPIView):
     queryset = Sector.objects.all()
     serializer_class = SectorSerializer
-    permission_classes = [IsAuthenticated]  # <-- 2. TRANCA ESTA ROTA
+    permission_classes = [IsAuthenticated]
 
-# View para ver detalhes, editar e deletar UM setor específico
+
 class SectorRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Sector.objects.all()
     serializer_class = SectorSerializer
-    permission_classes = [IsAuthenticated]  # <-- 3. TRANCA ESTA ROTA TAMBÉM
+    permission_classes = [IsAuthenticated]
 
-from rest_framework.permissions import AllowAny
-from .models import Indicador, Atividade
-from .serializers import IndicadorSerializer, AtividadeSerializer
 
 class IndicadorCreateListView(generics.ListCreateAPIView):
-    queryset = Indicador.objects.all()
     serializer_class = IndicadorSerializer
-    permission_classes = [AllowAny] # Liberado temporariamente para integração com PHP
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        usuario = self.request.user
+        qs = Indicador.objects.all()
+        if usuario.nivel_acesso == 'Administrador':
+            return qs
+        return qs.filter(id_setor=usuario.id_setor)
+
+    def perform_create(self, serializer):
+        usuario = self.request.user
+        if usuario.nivel_acesso == 'Administrador':
+            serializer.save()
+        else:
+            serializer.save(id_setor=usuario.id_setor)
+
 
 class AtividadeCreateListView(generics.ListCreateAPIView):
-    queryset = Atividade.objects.all().order_by('-data_cadastro')
     serializer_class = AtividadeSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        usuario = self.request.user
+        qs = Atividade.objects.select_related('id_indicador', 'id_usuario').order_by('-data_cadastro')
+        if usuario.nivel_acesso == 'Administrador':
+            return qs
+        return qs.filter(id_indicador__id_setor=usuario.id_setor)
+
+    def perform_create(self, serializer):
+        # O responsável pelo lançamento é sempre o usuário autenticado.
+        serializer.save(id_usuario=self.request.user)
+
+
+class AtividadeRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = AtividadeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        usuario = self.request.user
+        qs = Atividade.objects.select_related('id_indicador', 'id_usuario')
+        if usuario.nivel_acesso == 'Administrador':
+            return qs
+        return qs.filter(id_indicador__id_setor=usuario.id_setor)

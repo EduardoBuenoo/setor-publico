@@ -13,3 +13,9 @@ class Oficios(models.Model):
 
     class Meta:
         db_table = 'oficios'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['ano', 'numero_sequencial'],
+                name='oficio_numero_unico_por_ano'
+            )
+        ]

@@ -3,74 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Plataforma Inteligente</title>
+
+    <title>Login | SIGDEI</title>
+
     <link rel="stylesheet" href="assets/css/style.css">
-</head>
-<body>
-    <div class="auth-container">
-        <div class="auth-card glass">
-            <img src="assets/img/logo_prefeitura.png" alt="Logo Prefeitura" style="width: 130px; display: block; margin: 0 auto 1.5rem;">
-            <h1>S.I.G.D.E.I</h1>
-            <p>Sistema Integrado de Gestão do Desenvolvimento Econômico de Iracemápolis</p>
-            
-            <div id="alert-box" class="alert alert-error" style="display: none;"></div>
 
-            <form id="login-form">
-                <div class="form-group">
-                    <label class="form-label" for="matricula">Matrícula</label>
-                    <input type="text" id="matricula" name="matricula" class="form-control" required autocomplete="off">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="senha">Senha</label>
-                    <input type="password" id="senha" name="senha" class="form-control" required>
-                </div>
-                
-                <button type="submit" class="btn btn-primary">Entrar no Sistema</button>
-            </form>
-        </div>
-    </div>
-
-    <script>
-        // Se já estiver logado, vai direto pro dashboard
-        if (localStorage.getItem('jwt_token')) {
-            window.location.href = 'dashboard.html';
+    <style>
+        .auth-link {
+            display: block;
+            margin-top: 1rem;
+            text-align: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.875rem;
         }
 
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const matricula = document.getElementById('matricula').value;
-            const senha = document.getElementById('senha').value;
-            const alertBox = document.getElementById('alert-box');
-            
+        .auth-link:hover {
+            color: var(--text-color);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="auth-container">
+
+    <div class="auth-card glass">
+
+        <img
+            src="assets/img/logo_prefeitura.png"
+            alt="Logo Prefeitura"
+            style="
+                width: 130px;
+                display: block;
+                margin: 0 auto 1.5rem;
+            "
+        >
+
+        <h1>S.I.G.D.E.I</h1>
+
+        <p>
+            Sistema Integrado de Gestão do
+            Desenvolvimento Econômico de Iracemápolis
+        </p>
+
+        <div
+            id="alert-box"
+            class="alert alert-error"
+            style="display: none;"
+        ></div>
+
+        <form id="login-form">
+
+            <div class="form-group">
+
+                <label
+                    class="form-label"
+                    for="matricula"
+                >
+                    Matrícula
+                </label>
+
+                <input
+                    type="text"
+                    id="matricula"
+                    name="matricula"
+                    class="form-control"
+                    required
+                    autocomplete="off"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label
+                    class="form-label"
+                    for="senha"
+                >
+                    Senha
+                </label>
+
+                <input
+                    type="password"
+                    id="senha"
+                    name="senha"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+                id="btn-login"
+            >
+                Entrar no Sistema
+            </button>
+
+        </form>
+
+        <a
+            href="recuperar-senha.html"
+            class="auth-link"
+        >
+            Esqueci minha senha
+        </a>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const API_URL = 'http://127.0.0.1:8000/api/v1';
+
+
+// ========================================================
+// VERIFICAR SE JÁ EXISTE LOGIN
+// ========================================================
+
+const tokenExistente =
+    localStorage.getItem('jwt_token');
+
+const usuarioExistente =
+    JSON.parse(
+        localStorage.getItem('user') || 'null'
+    );
+
+
+if (tokenExistente && usuarioExistente) {
+
+    if (usuarioExistente.primeiro_acesso) {
+
+        window.location.href =
+            'primeiro-acesso.html';
+
+    } else {
+
+        window.location.href =
+            'dashboard.html';
+    }
+}
+
+
+// ========================================================
+// LOGIN
+// ========================================================
+
+document
+    .getElementById('login-form')
+    .addEventListener(
+        'submit',
+        async function (event) {
+
+            event.preventDefault();
+
+            const matricula =
+                document
+                    .getElementById('matricula')
+                    .value
+                    .trim();
+
+            const senha =
+                document
+                    .getElementById('senha')
+                    .value;
+
+            const alertBox =
+                document
+                    .getElementById('alert-box');
+
+            const btnLogin =
+                document
+                    .getElementById('btn-login');
+
+
+            alertBox.style.display = 'none';
+
+            btnLogin.disabled = true;
+            btnLogin.textContent = 'Entrando...';
+
+
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/v1/login/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ matricula, senha })
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    // Salvar o Token e os dados do usuario no LocalStorage
-                    localStorage.setItem('jwt_token', data.access);
-                    localStorage.setItem('user', JSON.stringify(data.user));
-                    
-                    // Redirecionar para o dashboard
-                    window.location.href = 'dashboard.html';
-                } else {
-                    alertBox.textContent = data.error || 'Credenciais inválidas.';
-                    alertBox.style.display = 'block';
+
+                const response =
+                    await fetch(
+                        `${API_URL}/login/`,
+                        {
+                            method: 'POST',
+
+                            headers: {
+                                'Content-Type':
+                                    'application/json'
+                            },
+
+                            body: JSON.stringify({
+                                matricula: matricula,
+                                senha: senha
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    alertBox.textContent =
+                        data.error ||
+                        'Matrícula ou senha inválida.';
+
+                    alertBox.style.display =
+                        'block';
+
+                    return;
                 }
-            } catch (err) {
-                alertBox.textContent = 'Erro ao conectar com a API (O servidor Django está rodando?).';
-                alertBox.style.display = 'block';
+
+
+                // Limpar sessão antiga
+
+                localStorage.clear();
+
+
+                // Salvar JWT
+
+                localStorage.setItem(
+                    'jwt_token',
+                    data.access
+                );
+
+
+                if (data.refresh) {
+
+                    localStorage.setItem(
+                        'refresh_token',
+                        data.refresh
+                    );
+                }
+
+
+                // Salvar dados do usuário
+
+                localStorage.setItem(
+                    'user',
+                    JSON.stringify(data.user)
+                );
+
+
+                // Primeiro acesso
+
+                if (data.user.primeiro_acesso) {
+
+                    window.location.href =
+                        'primeiro-acesso.html';
+
+                } else {
+
+                    window.location.href =
+                        'dashboard.html';
+                }
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                alertBox.textContent =
+                    'Erro ao conectar com o servidor. Verifique se o Django está rodando.';
+
+                alertBox.style.display =
+                    'block';
+
+            } finally {
+
+                btnLogin.disabled = false;
+                btnLogin.textContent =
+                    'Entrar no Sistema';
             }
-        });
-    </script>
+
+        }
+    );
+
+</script>
+
 </body>
 </html>

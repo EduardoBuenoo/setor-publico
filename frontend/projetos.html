@@ -331,7 +331,7 @@
                                         <div style="width: ${total > 0 ? (contAmarelo/total)*100 : 0}%; background: #eab308; height: 100%; transition: width 0.5s ease-in-out;" title="${contAmarelo} pendentes"></div>
                                     </div>
                                     <div style="font-size: 0.75rem; color: #94a3b8; text-align: right;">
-                                        ${total > 0 ? Math.round((concluidas/total)*100) : 0}% Concluído
+                                        ${p.percentual_conclusao ?? 0}% Concluído
                                     </div>
                                 </div>
                             </div>
